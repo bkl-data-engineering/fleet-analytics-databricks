@@ -1,43 +1,45 @@
-# fleet-analytics-databricks
+🚚 Fleet Transaction Analytics: End-to-End Medallion Pipeline
+📌 Project Overview
+This project demonstrates a production-grade Medallion Architecture using Databricks Serverless and Delta Lake. I implemented two distinct data movement patterns—Batch and Incremental Streaming—to process vehicle transaction records (fueling events, odometer readings, and cost data).
+The pipeline transforms raw transactional logs into a high-value Driver Spend Summary, calculating fuel efficiency and operational costs across a fleet of vehicles.
 
-# Fleet Analytics Data Platform (Databricks)
+🏗️ Architecture & Technical Stack
+Platform: Databricks (Serverless Compute)
+Storage: Unity Catalog (Managed Volumes & Tables)
+Engine: PySpark / Spark Structured Streaming
+Ingestion: Auto Loader (cloudFiles)
+Format: Delta Lake (with Schema Evolution & Enforcement)
 
-##  Overview
-Built an end-to-end data engineering pipeline using Databricks to analyze fleet fuel transactions and driver behavior.
+🚀 Key Engineering Highlights
+1. Unified Ingestion with Auto Loader
+Implemented Auto Loader to handle file-based streaming of transaction logs from Unity Catalog Volumes.
+Idempotent Processing: Utilizes Checkpoints to ensure that each transaction file is processed exactly once, ensuring financial accuracy.
+Cost Optimization: Used the AvailableNow trigger to process pending data as an incremental batch, maximizing Serverless efficiency.
+2. Silver Layer Transformation & Enrichment
+Transformed raw transaction strings into a typed schema with business-ready logic:
+Financial Calculations: Calculated fuel_cost ($fuel\_price \times fuel\_volume$) during the Silver stream.
+Data Cleaning: Enforced data types for odometer_reading and trip_distance to ensure downstream reporting accuracy.
+3. Stateful Gold Layer (The CDC Pattern)
+Implemented a Change Data Capture (CDC) pattern for the final aggregation:
+foreachBatch Upserts: Used foreachBatch to run a Delta MERGE operation, updating driver totals without rewriting the entire table.
+Efficiency: Only rows for drivers with new transactions are updated, making the pipeline highly scalable for large fleets.
 
-##  Architecture
-- Bronze: Raw ingestion with run tracking and metadata
-- Silver: Data cleaning, schema enforcement, deduplication
-- Gold: Aggregated business insights
-- Data Quality: Validation checks with run-level monitoring
 
-##  Tech Stack
-- Databricks
-- PySpark
-- Delta Lake
-- SQL
 
-##  Key Features
-- Medallion architecture (Bronze → Silver → Gold)
-- Run-level lineage using `run_id`
-- Deduplication using `record_hash`
-- Data quality framework (null, range, duplicate, outlier checks)
-- Partitioned data for performance optimization
 
-##  Sample Insights
-- Driver fuel spend analysis
-- Vehicle efficiency metrics (MPG)
-- Daily fleet trends
 
-##  Data Quality Monitoring
-- Run-level validation tracking
-- Historical DQ metrics stored in Delta tables
-- Basic alerting for failed checks
 
-##  Project Structure
-(mention folders)
 
-##  Future Improvements
-- Streaming ingestion (Kafka / Spark Streaming)
-- AI-based anomaly detection
-- Dashboard integration (Power BI / Tableau)
+
+
+
+
+
+
+
+
+
+
+
+
+
