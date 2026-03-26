@@ -19,4 +19,14 @@ To demonstrate a cost-efficient, fault-tolerant ingestion pattern that handles S
    * **Why this matters:** When a driver completes a new transaction, the pipeline only updates that specific driver's record in the driver_performance table. It adds the new fuel_cost to the existing total, rather than recalculating the entire fleet's history.
    * **Scalability:** This pattern allows the system to handle millions of drivers while keeping update times to mere seconds.
 
-4. **Technical Comparison:** Batch vs. StreamingFeatureBatch ApproachStreaming ApproachIngestion TypeFull Table ScanIncremental (cloudFiles)Schema HandlingManual/StaticAuto-Inference & EvolutionGold Write Modeoverwritemerge (Upsert)LatencyHours/DaysMinutes/SecondsCostHigh (full re-process)Low (incremental only)
+4. **Technical Comparison: Batch vs. Streaming**
+   
+  | Feature | Batch Ingestion | Streaming (Auto Loader) |
+  | :--- | :--- | :--- |
+  | **Data Discovery** | Full Directory Scan | **Incremental (`cloudFiles`)** |
+  | **Schema Handling** | Manual / Static | **Auto-Inference & Evolution** |
+  | **Processing Trigger** | Manual / Scheduled | **Trigger Once / AvailableNow** |
+  | **Gold Write Mode** | `overwrite` | **`merge` (Stateful Upsert)** |
+  | **Compute Efficiency** | Re-processes all data | **Processes only new data** |
+  | **Latency** | High (Batch Windows) | **Low (Incremental Batches)** |
+    
