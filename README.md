@@ -10,15 +10,19 @@ Engine: PySpark / Spark Structured Streaming
 Ingestion: Auto Loader (cloudFiles)
 Format: Delta Lake (with Schema Evolution & Enforcement)
 
+
+
 🚀 Key Engineering Highlights
 1. Unified Ingestion with Auto Loader
 Implemented Auto Loader to handle file-based streaming of transaction logs from Unity Catalog Volumes.
 Idempotent Processing: Utilizes Checkpoints to ensure that each transaction file is processed exactly once, ensuring financial accuracy.
 Cost Optimization: Used the AvailableNow trigger to process pending data as an incremental batch, maximizing Serverless efficiency.
+
 2. Silver Layer Transformation & Enrichment
 Transformed raw transaction strings into a typed schema with business-ready logic:
 Financial Calculations: Calculated fuel_cost ($fuel\_price \times fuel\_volume$) during the Silver stream.
 Data Cleaning: Enforced data types for odometer_reading and trip_distance to ensure downstream reporting accuracy.
+
 3. Stateful Gold Layer (The CDC Pattern)
 Implemented a Change Data Capture (CDC) pattern for the final aggregation:
 foreachBatch Upserts: Used foreachBatch to run a Delta MERGE operation, updating driver totals without rewriting the entire table.
